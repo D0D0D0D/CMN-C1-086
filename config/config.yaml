@@ -1,0 +1,17 @@
+# Runtime configuration — CMN-C1-086
+# Runtime-tunable parameters only. The static manifest lives in config/agent.yaml.
+# Values previously held in the manifest's `agent.config` block moved here
+# unchanged during the AgentRegistry manifest migration; no value was altered.
+
+max_retry: 3
+
+# 1MB default input hard cap (S-2). The HTTP entry point validates this file and
+# injects the value into PreProcessNode; the module constant remains the fallback
+# when a deployment intentionally ships no runtime file.
+max_log_bytes: 1048576
+
+# HITL is not used by this template. The conditional PB-7 test reads this file to
+# decide whether PB-7 applies, so the declaration lives here for non-HITL use.
+memory_enabled: false
+hitl:
+  enabled: false

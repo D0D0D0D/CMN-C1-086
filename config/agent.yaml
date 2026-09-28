@@ -1,0 +1,33 @@
+# Agent Manifest — AgentRegistry entry point
+# AgentRegistry reads every key below at ROOT level; do not nest under agent:.
+#
+# STATIC MANIFEST ONLY. Runtime-tunable parameters (max_retry / timeout_seconds /
+# max_log_bytes / hitl.*) live in config/config.yaml.
+id: "CMN-C1-086"
+name: "Agent Activity Audit & Compliance Report Generator"
+namespace: "cmn"
+version: "1.0.0"
+enabled: true
+category: "Cat 1"
+# Static generation contract (deterministic | llm; an omitted value defaults to deterministic).
+# 監査メトリクスと非抑制のセキュリティイベント一覧は audit_aggregator が決定論的に作るが、
+# レポートの叙述サマリは注入された LLM が起草するため llm。
+# LLM は config["llm"]（BaseLLM）シームでのみ受け取り、未注入・失敗時は決定論ナラティブへ
+# 縮退して status=success を保つ（docs/02_design.md の Design Decision Record を参照）。
+generation_mode: "llm"  # deterministic | llm
+industry: "CMN"
+
+# Level 2 base agent type (conceptual pattern reference — the class inherits L1
+# AgentBaseGraph directly; see docs/02_design.md "L1 Base").
+base_type: "DocGenerationAgent"  # RAGAgent | ChatAgent | ReActAgent | DocGenerationAgent
+
+# Entry point — single dotted import path (module.Class).
+class: "src.graph.graph.AgentAuditReportAgent"
+
+# Declared dependencies (AgentRegistry reads this at deployment time).
+requires:
+  extras: []
+  secrets: []
+
+# Security
+required_trust_level: "VERIFIED_EXTERNAL"
